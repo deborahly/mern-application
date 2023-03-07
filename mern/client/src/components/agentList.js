@@ -6,6 +6,7 @@ const Agent = props => (
     <td>{props.agent.firstName}</td>
     <td>{props.agent.lastName}</td>
     <td>{props.agent.email}</td>
+    <td>{props.agent.phone}</td>
     <td>{props.agent.rating}</td>
     <td>{props.agent.fee}</td>
     <td>{props.agent.sales}</td>
@@ -41,7 +42,8 @@ export default function AgentList() {
         return;
       }
 
-      const agents = await response.json();
+      const responseObj = await response.json();
+      const agents = responseObj.data;
       setAgents(agents);
     }
 
@@ -83,6 +85,7 @@ export default function AgentList() {
             <th>First Name</th>
             <th>Last Name</th>
             <th>Email</th>
+            <th>Phone</th>
             <th>Rating</th>
             <th>Fee</th>
             <th>Sales</th>
