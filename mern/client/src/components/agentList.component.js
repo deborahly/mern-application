@@ -1,37 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-
-const Agent = props => (
-  <tr>
-    <td>{props.agent.firstName}</td>
-    <td>{props.agent.lastName}</td>
-    <td>{props.agent.email}</td>
-    <td>{props.agent.phone}</td>
-    <td>{props.agent.rating}</td>
-    <td>{props.agent.fee}</td>
-    <td>{props.agent.sales}</td>
-    <td>{props.agent.region}</td>
-    <td>
-      <Link className='btn btn-link' to={`/edit/${props.agent._id}`}>
-        Edit
-      </Link>{' '}
-      |
-      <button
-        className='btn btn-link'
-        onClick={() => {
-          props.deleteAgent(props.agent._id);
-        }}
-      >
-        Delete
-      </button>
-    </td>
-  </tr>
-);
+import Agent from './agent.component';
 
 export default function AgentList() {
   const [agents, setAgents] = useState([]);
 
-  // This method fetches the agents from the database.
+  // Fetch agents from the database
   useEffect(() => {
     async function getAgents() {
       const response = await fetch(`http://localhost:5000/agents/`);
@@ -52,17 +25,14 @@ export default function AgentList() {
     return;
   }, [agents.length]);
 
-  // This method will delete a agent
   async function deleteAgent(id) {
     await fetch(`http://localhost:5000/agent-delete?id=${id}`, {
       method: 'DELETE',
     });
-
     const newAgents = agents.filter(el => el._id !== id);
     setAgents(newAgents);
   }
 
-  // This method will map out the agents on the table
   function agentList() {
     return agents.map(agent => {
       return (
@@ -75,7 +45,6 @@ export default function AgentList() {
     });
   }
 
-  // This following section will display the table with the agents of individuals.
   return (
     <div>
       <h3>Agent List</h3>
