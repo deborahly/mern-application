@@ -32,38 +32,17 @@ async function loginUser(email, password) {
     }
 
     if (await bcrypt.compare(password, user.password)) {
+      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+
       return {
         firstName: user.first_name,
         lastName: user.last_name,
+        email: user.email,
+        accessToken: accessToken,
       };
     } else {
       return false;
     }
-  } catch (err) {
-    throw err;
-  }
-}
-
-async function loginUserWithJWT(email, password) {
-  try {
-    const user = await UserRepository.userFindOne({ email });
-
-    if (!user || user.password !== password) {
-      const err = new Error('Email or password does not match.');
-      err.status = 400;
-      throw err;
-    }
-
-    const jwtToken = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET
-    );
-
-    return {
-      first_name: user.first_name,
-      last_name: user.last_name,
-      token: jwtToken,
-    };
   } catch (err) {
     throw err;
   }
