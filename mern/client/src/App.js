@@ -9,6 +9,7 @@ import AgentList from './components/agentList.component';
 import Edit from './components/edit.component';
 import Create from './components/create.component';
 import Login from './components/login.component';
+import Logout from './components/logout.component';
 import { AuthProvider, RequireAuth, useIsAuthenticated } from 'react-auth-kit';
 
 const App = () => {
@@ -52,6 +53,7 @@ const App = () => {
                 }
               />
               <Route path='/login' element={<Login />} />
+              <Route path='/logout' element={<Logout />} />
             </Routes>
           </div>
         </div>
