@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useAuthHeader } from 'react-auth-kit';
 
 export default function Create() {
   const [form, setForm] = useState({
@@ -14,6 +15,7 @@ export default function Create() {
   });
 
   const navigate = useNavigate();
+  const authHeader = useAuthHeader();
 
   function updateForm(value) {
     return setForm(prev => {
@@ -30,6 +32,7 @@ export default function Create() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: authHeader(),
       },
       body: JSON.stringify(newPerson),
     }).catch(error => {
