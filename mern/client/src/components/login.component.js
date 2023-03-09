@@ -1,10 +1,16 @@
 import { useState, useEffect } from 'react';
+import { useSignIn } from 'react-auth-kit';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
+  const signIn = useSignIn();
+  const navigate = useNavigate();
+
   const [user, setUser] = useState({
     firstName: '',
     lastName: '',
-    token: '',
+    email: '',
+    accessToken: '',
   });
 
   const [form, setForm] = useState({
@@ -47,6 +53,23 @@ export default function Login() {
     const responseObj = await response.json();
     const user = responseObj.data;
     setUser(user);
+
+    if (
+      signIn({
+        token: user.accessToken,
+        expiresIn: 3600,
+        tokenType: 'Bearer',
+        authState: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+        },
+      })
+    ) {
+      navigate(-1);
+    } else {
+      window.alert('Error on sign in');
+    }
   }
 
   return (
