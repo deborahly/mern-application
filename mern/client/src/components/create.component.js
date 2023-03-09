@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useAuthHeader } from 'react-auth-kit';
 
 export default function Create() {
   const [form, setForm] = useState({
@@ -12,27 +13,26 @@ export default function Create() {
     sales: '',
     region: '',
   });
-  
-  const navigate = useNavigate();
 
-  // These methods will update the state properties.
+  const navigate = useNavigate();
+  const authHeader = useAuthHeader();
+
   function updateForm(value) {
     return setForm(prev => {
       return { ...prev, ...value };
     });
   }
 
-  // This function will handle the submission.
   async function onSubmit(e) {
     e.preventDefault();
 
-    // When a post request is sent to the create url, we'll add a new agent to the database.
     const newPerson = { ...form };
 
     await fetch('http://localhost:5000/agent-create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: authHeader(),
       },
       body: JSON.stringify(newPerson),
     }).catch(error => {
@@ -50,10 +50,10 @@ export default function Create() {
       sales: '',
       region: '',
     });
+
     navigate('/');
   }
 
-  // This following section will display the form that takes the input from the user.
   return (
     <div>
       <h3>Create Agent</h3>
@@ -187,11 +187,7 @@ export default function Create() {
           </div>
         </div>
         <div className='form-group'>
-          <input
-            type='submit'
-            value='Create'
-            className='btn btn-primary'
-          />
+          <input type='submit' value='Create' className='btn btn-primary' />
         </div>
       </form>
     </div>

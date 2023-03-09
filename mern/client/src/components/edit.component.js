@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
+import { useAuthHeader } from 'react-auth-kit';
 
 export default function Edit() {
   const [form, setForm] = useState({
@@ -14,12 +15,19 @@ export default function Edit() {
   });
   const params = useParams();
   const navigate = useNavigate();
+  const authHeader = useAuthHeader();
 
   useEffect(() => {
     async function fetchData() {
       const id = params.id.toString();
       const response = await fetch(
-        `http://localhost:5000/agent/${params.id.toString()}`
+        `http://localhost:5000/agent/${params.id.toString()}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: authHeader(),
+          },
+        }
       );
 
       if (!response.ok) {
@@ -76,6 +84,7 @@ export default function Edit() {
       body: JSON.stringify(editedPerson),
       headers: {
         'Content-Type': 'application/json',
+        Authorization: authHeader(),
       },
     });
 

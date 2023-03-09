@@ -1,4 +1,4 @@
-require('dotenv').config({ path: 'mern/server/config.env' });
+require('dotenv').config({ path: './config.env' });
 const port = process.env.PORT || 5000;
 // get driver connection
 const dbo = require('./db/conn');
