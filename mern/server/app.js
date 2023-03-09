@@ -7,5 +7,6 @@ app.use(express.json());
 
 // Import routers
 app.use(require('./routes/agent.route'));
+app.use(require('./routes/user.route'));
 
 module.exports = app;
