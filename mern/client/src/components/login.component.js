@@ -19,10 +19,6 @@ export default function Login() {
     password: '',
   });
 
-  useEffect(() => {
-    document.title = `Welcome back, ${user.firstName}!`;
-  });
-
   function updateForm(value) {
     return setForm(prev => {
       return { ...prev, ...value };
