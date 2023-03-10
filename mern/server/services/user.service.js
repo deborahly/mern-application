@@ -1,13 +1,9 @@
 const jwt = require('jsonwebtoken');
 const UserRepository = require('../repositories/user.repository');
-const bcrypt = require('bcrypt');
 
 async function createUser(user) {
   try {
-    const { firstName, lastName, email, password } = user;
-
-    // Create hashed password with salt
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const { firstName, lastName, email, hashedPassword = password } = user;
 
     const newUser = {
       first_name: firstName,
@@ -31,7 +27,7 @@ async function loginUser(email, password) {
       throw err;
     }
 
-    if (await bcrypt.compare(password, user.password)) {
+    if (user.password == password) {
       const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
 
       return {
