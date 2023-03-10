@@ -31,8 +31,7 @@ export default function Edit() {
       );
 
       if (!response.ok) {
-        const message = `An error has occured: ${response.statusText}`;
-        window.alert(message);
+        navigate(`/error/${response.statusText}`);
         return;
       }
 
@@ -52,7 +51,7 @@ export default function Edit() {
     fetchData();
 
     return;
-  }, [params.id, navigate]);
+  }, [params.id]);
 
   // These methods will update the state properties.
   function updateForm(value) {

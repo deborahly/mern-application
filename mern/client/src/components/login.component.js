@@ -1,18 +1,12 @@
-import { useState, useEffect } from 'react';
-import { useSignIn } from 'react-auth-kit';
+import { useState } from 'react';
+import { useSignIn, useIsAuthenticated } from 'react-auth-kit';
 import { useNavigate } from 'react-router-dom';
 import CryptoJS from 'crypto-js';
 
 export default function Login() {
   const signIn = useSignIn();
   const navigate = useNavigate();
-
-  const [user, setUser] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    accessToken: '',
-  });
+  const isAuthenticated = useIsAuthenticated();
 
   const [form, setForm] = useState({
     email: '',
@@ -45,14 +39,12 @@ export default function Login() {
     });
 
     if (!response.ok) {
-      const message = `An error occured: ${response.statusText}`;
-      window.alert(message);
+      navigate(`/error/${response.statusText}`);
       return;
     }
 
     const responseObj = await response.json();
     const user = responseObj.data;
-    setUser(user);
 
     if (
       signIn({
@@ -66,13 +58,15 @@ export default function Login() {
         },
       })
     ) {
-      navigate(-1);
+      navigate('/');
     } else {
-      window.alert('Error on sign in');
+      navigate('/error/Please try again');
     }
   }
 
-  return (
+  return isAuthenticated() ? (
+    <h3 className='text-center py-2'>You are already logged in 😉</h3>
+  ) : (
     <div>
       <h3>Login</h3>
       <form onSubmit={onSubmit}>
