@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Agent from './agent.component';
+import { useNavigate } from 'react-router-dom';
 import { useAuthHeader } from 'react-auth-kit';
 
 export default function AgentList() {
   const [agents, setAgents] = useState([]);
   const authHeader = useAuthHeader();
+  const navigate = useNavigate();
 
-  // Fetch agents from the database
   useEffect(() => {
     async function getAgents() {
       const response = await fetch('http://localhost:5000/agents/', {
@@ -17,8 +18,7 @@ export default function AgentList() {
       });
 
       if (!response.ok) {
-        const message = `An error occured: ${response.statusText}`;
-        window.alert(message);
+        navigate(`/error/${response.statusText}`);
         return;
       }
 
@@ -30,7 +30,7 @@ export default function AgentList() {
     getAgents();
 
     return;
-  }, [agents.length]);
+  }, [agents.length, authHeader, navigate]);
 
   async function deleteAgent(id) {
     await fetch(`http://localhost:5000/agent-delete?id=${id}`, {
