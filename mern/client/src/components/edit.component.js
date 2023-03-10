@@ -51,7 +51,7 @@ export default function Edit() {
     fetchData();
 
     return;
-  }, [params.id, navigate, authHeader]);
+  }, [params.id]);
 
   // These methods will update the state properties.
   function updateForm(value) {

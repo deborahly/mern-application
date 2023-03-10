@@ -30,7 +30,7 @@ export default function AgentList() {
     getAgents();
 
     return;
-  }, [agents.length, authHeader, navigate]);
+  }, [agents.length]);
 
   async function deleteAgent(id) {
     await fetch(`http://localhost:5000/agent-delete?id=${id}`, {
