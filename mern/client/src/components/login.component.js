@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSignIn, useIsAuthenticated } from 'react-auth-kit';
 import { useNavigate } from 'react-router-dom';
 import CryptoJS from 'crypto-js';
@@ -8,20 +8,9 @@ export default function Login() {
   const navigate = useNavigate();
   const isAuthenticated = useIsAuthenticated();
 
-  const [user, setUser] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    accessToken: '',
-  });
-
   const [form, setForm] = useState({
     email: '',
     password: '',
-  });
-
-  useEffect(() => {
-    document.title = `Welcome back, ${user.firstName}!`;
   });
 
   function updateForm(value) {
@@ -56,7 +45,6 @@ export default function Login() {
 
     const responseObj = await response.json();
     const user = responseObj.data;
-    setUser(user);
 
     if (
       signIn({
@@ -70,7 +58,7 @@ export default function Login() {
         },
       })
     ) {
-      navigate(-1);
+      navigate('/');
     } else {
       navigate('/error/Please try again');
     }
