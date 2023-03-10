@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSignIn } from 'react-auth-kit';
 import { useNavigate } from 'react-router-dom';
+import CryptoJS from 'crypto-js';
 
 export default function Login() {
   const signIn = useSignIn();
@@ -33,7 +34,10 @@ export default function Login() {
 
     const loginAttempt = {
       email: form.email,
-      password: form.password,
+      password: CryptoJS.HmacSHA512(
+        form.email + form.password,
+        form.password
+      ).toString(),
     };
 
     const response = await fetch(`http://localhost:5000/login`, {
