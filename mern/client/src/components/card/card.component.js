@@ -11,7 +11,7 @@ function BootstrapCard({ title, image, text, link }) {
         <Card.Title>{title}</Card.Title>
         <Card.Text>{text}</Card.Text>
         <Link to={link}>
-          <Button className='card-btn' variant='primary'>Go to page</Button>
+          <Button className='card__btn' variant='primary'>Go to page</Button>
         </Link>
       </Card.Body>
     </Card>
