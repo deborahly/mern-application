@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSignIn, useIsAuthenticated } from 'react-auth-kit';
 import { useNavigate } from 'react-router-dom';
 import CryptoJS from 'crypto-js';
+import BootstrapAlert, { variantList } from './alert.component';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Login() {
   const signIn = useSignIn();
@@ -12,6 +15,16 @@ export default function Login() {
     email: '',
     password: '',
   });
+
+  const [alert, setAlert] = useState({
+    variant: '',
+    content: '',
+    active: false,
+  });
+
+  useEffect(() => {
+    toast('Please, sign in.');
+  }, []);
 
   function updateForm(value) {
     return setForm(prev => {
@@ -39,10 +52,32 @@ export default function Login() {
     });
 
     if (!response.ok) {
-      navigate(`/error/${response.statusText}`);
-      return;
+      // Reset form
+      setForm(() => {
+        return { email: '', password: '' };
+      });
+      // Update alert status
+      setAlert(() => {
+        return {
+          variant: variantList.danger,
+          content: response.statusText,
+          active: true,
+        };
+      });
+      // Add 5s timeout
+      const timer = setTimeout(() => {
+        setAlert(() => {
+          return {
+            variant: '',
+            content: '',
+            active: false,
+          };
+        });
+      }, 5000);
+      return () => clearTimeout(timer);
     }
 
+    // If response.ok
     const responseObj = await response.json();
     const user = responseObj.data;
 
@@ -94,6 +129,23 @@ export default function Login() {
           <input type='submit' value='Login' className='btn btn-primary' />
         </div>
       </form>
+      <ToastContainer
+        position='top-right'
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme='light'
+      />
+      {alert.active && (
+        <BootstrapAlert alertVariant={alert.variant}>
+          {alert.content}
+        </BootstrapAlert>
+      )}
     </div>
   );
 }
