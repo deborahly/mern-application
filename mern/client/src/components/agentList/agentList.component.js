@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Agent from './agent.component';
-import { useNavigate } from 'react-router-dom';
+import Agent from '../agent.component';
+import { useNavigate, NavLink } from 'react-router-dom';
 import { useAuthHeader } from 'react-auth-kit';
+import './agentList.styles.css';
 
 export default function AgentList() {
   const [agents, setAgents] = useState([]);
@@ -57,7 +58,16 @@ export default function AgentList() {
 
   return (
     <div>
-      <h3>Agent List</h3>
+      <div className='header'>
+        <h3>Agent List</h3>
+        <ul className='navbar-nav'>
+          <li className='nav-item'>
+            <NavLink className='nav-link' to='/create'>
+              Create Agent
+            </NavLink>
+          </li>
+        </ul>
+      </div>
       <table className='table table-striped' style={{ marginTop: 20 }}>
         <thead>
           <tr>
