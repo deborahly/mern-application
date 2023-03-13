@@ -18,15 +18,12 @@ export default function Navbar() {
             ></img>
           </NavLink>
           <ul className='navbar-nav ml-auto'>
-            <li className='nav-item'>
-              <NavLink className='nav-link' to='/create'>
-                Create Agent
-              </NavLink>
-            </li>
             {isAuthenticated() && (
-              <NavLink className='nav-link' to='/logout'>
-                Logout
-              </NavLink>
+               <li className='nav-item'>
+                <NavLink className='nav-link' to='/logout'>
+                  Logout
+                </NavLink>
+              </li>
             )}
           </ul>
         </div>
