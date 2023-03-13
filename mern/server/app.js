@@ -8,5 +8,6 @@ app.use(express.json());
 // Import routers
 app.use(require('./routes/agent.route'));
 app.use(require('./routes/user.route'));
+app.use(require('./routes/transaction.route'));
 
 module.exports = app;
