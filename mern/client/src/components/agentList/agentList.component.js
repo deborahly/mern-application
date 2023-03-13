@@ -58,7 +58,7 @@ export default function AgentList() {
 
   return (
     <div>
-      <div className='header'>
+      <div className='agent-list__header'>
         <h3>Agent List</h3>
         <ul className='navbar-nav'>
           <li className='nav-item'>
