@@ -14,7 +14,7 @@ export default function Agent(props) {
       <td>
         <Link className='btn btn-link' to={`/edit/${props.agent._id}`}>
           Edit
-        </Link>{' '}
+        </Link>
         |
         <button
           className='btn btn-link'

@@ -51,7 +51,7 @@ export default function Create() {
       region: '',
     });
 
-    navigate('/');
+    navigate('/agent');
   }
 
   return (
