@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuthHeader } from 'react-auth-kit';
+import Modal from './modal/modal.component';
 
 export default function CreateTransaction() {
   const [form, setForm] = useState({
@@ -8,6 +9,7 @@ export default function CreateTransaction() {
     agentId: '',
   });
   const [agents, setAgents] = useState([]);
+  const [modal, setModal] = useState({ show: false });
 
   const navigate = useNavigate();
   const authHeader = useAuthHeader();
@@ -42,9 +44,14 @@ export default function CreateTransaction() {
     });
   }
 
-  async function onSubmit(e) {
+  function onSubmit(e) {
     e.preventDefault();
+    setModal(() => {
+      return { show: true };
+    });
+  }
 
+  async function handleConfirm() {
     const newTransaction = { ...form };
 
     await fetch('http://localhost:5000/transaction', {
@@ -65,6 +72,12 @@ export default function CreateTransaction() {
     });
 
     navigate('/transaction');
+  }
+
+  function handleClose() {
+    setModal(() => {
+      return { show: false };
+    });
   }
 
   return (
@@ -98,6 +111,12 @@ export default function CreateTransaction() {
         <div className='form-group'>
           <input type='submit' value='Create' className='btn btn-primary' />
         </div>
+        <Modal
+          show={modal.show}
+          text='Confirm creation?'
+          handleConfirm={handleConfirm}
+          handleClose={handleClose}
+        />
       </form>
     </div>
   );

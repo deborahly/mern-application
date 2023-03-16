@@ -2,10 +2,14 @@ import React, { useEffect, useState } from 'react';
 import Agent from '../agent.component';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { useAuthHeader } from 'react-auth-kit';
+import Modal from '../modal/modal.component';
 import './agentList.styles.css';
 
 export default function AgentList() {
   const [agents, setAgents] = useState([]);
+  const [modal, setModal] = useState({ show: false });
+  const [agentToDelete, setAgentToDelete] = useState({ id: '' });
+
   const authHeader = useAuthHeader();
   const navigate = useNavigate();
 
@@ -33,15 +37,35 @@ export default function AgentList() {
     return;
   }, [agents.length]);
 
-  async function deleteAgent(id) {
-    await fetch(`http://localhost:5000/agent-delete?id=${id}`, {
+  function handleDeleteClick(id) {
+    setAgentToDelete(() => {
+      return {
+        id: id,
+      };
+    });
+    setModal(() => {
+      return { show: true };
+    });
+  }
+
+  async function handleConfirm() {
+    await fetch(`http://localhost:5000/agent-delete?id=${agentToDelete.id}`, {
       method: 'DELETE',
       headers: {
         Authorization: authHeader(),
       },
     });
-    const newAgents = agents.filter(el => el._id !== id);
+    const newAgents = agents.filter(el => el._id !== agentToDelete.id);
     setAgents(newAgents);
+    setModal(() => {
+      return { show: false };
+    });
+  }
+
+  function handleClose() {
+    setModal(() => {
+      return { show: false };
+    });
   }
 
   function agentList() {
@@ -49,7 +73,7 @@ export default function AgentList() {
       return (
         <Agent
           agent={agent}
-          deleteAgent={() => deleteAgent(agent._id)}
+          deleteAgent={() => handleDeleteClick(agent._id)}
           key={agent._id}
         />
       );
@@ -83,6 +107,12 @@ export default function AgentList() {
         </thead>
         <tbody>{agentList()}</tbody>
       </table>
+      <Modal
+        show={modal.show}
+        text='Are you sure you want to continue?'
+        handleConfirm={handleConfirm}
+        handleClose={handleClose}
+      />
     </div>
   );
 }
