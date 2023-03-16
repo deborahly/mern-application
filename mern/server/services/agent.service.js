@@ -1,4 +1,7 @@
 const AgentRepository = require('../repositories/agent.repository');
+module.exports = { getAgents, getAgent, createAgent, updateAgent, deleteAgent };
+const deleteTransactions =
+  require('../services/transaction.service').deleteTransactions;
 
 async function getAgents() {
   try {
@@ -38,11 +41,13 @@ async function updateAgent(id, agent) {
 
 async function deleteAgent(id) {
   try {
+    // Delete agent's transactions
+    await deleteTransactions(id);
+
+    // Delete agent
     const dbResult = await AgentRepository.agentDelete(id);
     return dbResult;
   } catch (err) {
     throw err;
   }
 }
-
-module.exports = { getAgents, getAgent, createAgent, updateAgent, deleteAgent };
