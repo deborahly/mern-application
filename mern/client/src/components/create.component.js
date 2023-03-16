@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuthHeader } from 'react-auth-kit';
+import Modal from './modal/modal.component';
 
 export default function Create() {
   const [form, setForm] = useState({
@@ -13,6 +14,7 @@ export default function Create() {
     sales: '',
     region: '',
   });
+  const [modal, setModal] = useState({ show: false });
 
   const navigate = useNavigate();
   const authHeader = useAuthHeader();
@@ -23,9 +25,14 @@ export default function Create() {
     });
   }
 
-  async function onSubmit(e) {
+  function onSubmit(e) {
     e.preventDefault();
+    setModal(() => {
+      return { show: true };
+    });
+  }
 
+  async function handleConfirm() {
     const newPerson = { ...form };
 
     await fetch('http://localhost:5000/agent-create', {
@@ -52,6 +59,12 @@ export default function Create() {
     });
 
     navigate('/agent');
+  }
+
+  function handleClose() {
+    setModal(() => {
+      return { show: false };
+    });
   }
 
   return (
@@ -190,6 +203,12 @@ export default function Create() {
           <input type='submit' value='Create' className='btn btn-primary' />
         </div>
       </form>
+      <Modal
+        show={modal.show}
+        text='Confirm creation?'
+        handleConfirm={handleConfirm}
+        handleClose={handleClose}
+      />
     </div>
   );
 }
