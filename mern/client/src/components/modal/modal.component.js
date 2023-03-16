@@ -9,7 +9,7 @@ export default function Modal({ show, text, handleConfirm, handleClose }) {
     <div className={showHideClassName}>
       <section className='modal__main'>
         {text}
-        <div class='modal__btn-group'>
+        <div className='modal__btn-group'>
           <button
             type='button'
             className='btn btn-secondary'
