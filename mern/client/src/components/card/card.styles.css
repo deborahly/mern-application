@@ -2,6 +2,11 @@
   width: 15rem;
 }
 
+.card__img {
+  height: 10rem;
+  width: auto;
+}
+
 .card__btn {
   display: block;
   margin: 0 auto;

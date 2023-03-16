@@ -6,7 +6,7 @@ import './card.styles.css';
 function BootstrapCard({ title, image, text, link }) {
   return (
     <Card className='card'>
-      <Card.Img variant='top' src={image} />
+      <Card.Img className='card__img' variant='top' src={image} />
       <Card.Body>
         <Card.Title>{title}</Card.Title>
         <Card.Text>{text}</Card.Text>

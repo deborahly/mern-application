@@ -14,7 +14,7 @@ function Home() {
       <Card
         className='col'
         title='Transactions'
-        image={require('../../images/agentCard.jpeg')}
+        image={require('../../images/transactions.jpg')}
         text='View and process transactions.'
         link='/transaction'
       ></Card>
