@@ -24,4 +24,14 @@ async function transactionInsertOne(transaction) {
   }
 }
 
-module.exports = { transactionFind, transactionInsertOne };
+async function transactionDeleteMany(agentId) {
+  const db_connect = dbo.getDb('admin-app');
+  const query = { agentId: ObjectId(agentId) };
+  return await db_connect.collection('transactions').deleteMany(query);
+}
+
+module.exports = {
+  transactionFind,
+  transactionInsertOne,
+  transactionDeleteMany,
+};
