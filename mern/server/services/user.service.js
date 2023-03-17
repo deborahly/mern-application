@@ -28,7 +28,8 @@ async function loginUser(email, password) {
     }
 
     if (user.password == password) {
-      const expiresIn = 100;
+      // 24 hours === 86400000 ms
+      const expiresIn = 86400000;
       const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: expiresIn,
       });

@@ -101,7 +101,7 @@ export default function CreateTransaction() {
             <option value=''>--Choose an agent--</option>
             {agents.map(agent => (
               <option key={agent._id} value={agent._id}>
-                {agent.firstName} {agent.lastName}
+                {agent.firstName} {agent.lastName} (User ID: {agent._id})
               </option>
             ))}
           </select>

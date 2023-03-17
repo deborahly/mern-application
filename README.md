@@ -1,4 +1,4 @@
-# Documentation on React
+# React
 ## What is the difference between React and React Native?
 React is a framework focused on web application development, while React Native is the React version for building mobile application.
 
@@ -17,6 +17,16 @@ JSX is a syntax extension of JS; meaning that its developers have taken JS and a
 - It improves performance due to the virtual DOM
 - It is based on reusable components
 
+# React concepts
+## Components
+Components are self-contained pieces of code that return a visual UI representation, which will then return the actual intended HTML rendered on the page. On the top layer of the application, we have the App component, followed by routers, then by other components. The components are always executed from the top down, in other words, from parent to children.
+
+## Props
+Props are key-value pairs of data that we can pass from one component to another. If the elements hold a parent-children relation, props can be passed from one to the other directly. If that is not the case, we just have to ensure to follow React's component tree structure to create the correct data flow.
+
+## State
+Component state is the data that we wish to persist inside a component. We can use React's hook useState to set and update state values.
+
 # MERN
 ## What are a few alternate tech stacks?
 - MEAN stack (MongoDB, Express, Angular, Node)
@@ -33,4 +43,3 @@ https://github.com/shashank23p/MERN-CoreUI-Admin
 https://github.com/belferink1996/MERN-template
 - Server setup with basic authentication
 - Client ready to communicate with the backend
-
