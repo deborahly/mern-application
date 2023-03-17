@@ -1,9 +1,10 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { useIsAuthenticated } from 'react-auth-kit';
+import { useIsAuthenticated, useAuthUser } from 'react-auth-kit';
 
 export default function Navbar() {
   const isAuthenticated = useIsAuthenticated();
+  const auth = useAuthUser();
 
   return (
     <div>
@@ -16,15 +17,18 @@ export default function Navbar() {
               src={require('../images/rocketLogo.png')}
             ></img>
           </NavLink>
-          <ul className='navbar-nav ml-auto'>
-            {isAuthenticated() && (
-               <li className='nav-item'>
-                <NavLink className='nav-link' to='/logout'>
-                  Logout
-                </NavLink>
-              </li>
-            )}
-          </ul>
+          {isAuthenticated() && (
+            <div>
+              <p className='my-0'>Welcome back, {auth().firstName}!</p>
+              <ul className='navbar-nav ml-auto justify-content-end'>
+                <li className='nav-item'>
+                  <NavLink className='nav-link' to='/logout'>
+                    Logout
+                  </NavLink>
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
       </nav>
     </div>
