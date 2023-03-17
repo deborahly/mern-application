@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthHeader, useSignOut } from 'react-auth-kit';
 import Modal from './modal/modal.component';
 
 export default function CreateTransaction() {
@@ -10,9 +10,9 @@ export default function CreateTransaction() {
   });
   const [agents, setAgents] = useState([]);
   const [modal, setModal] = useState({ show: false });
-
   const navigate = useNavigate();
   const authHeader = useAuthHeader();
+  const signOut = useSignOut();
 
   useEffect(() => {
     async function getAgents() {
@@ -22,62 +22,60 @@ export default function CreateTransaction() {
           Authorization: authHeader(),
         },
       });
-
       if (!response.ok) {
+        if (response.status === 403) {
+          signOut();
+          navigate('/login');
+          return;
+        }
         navigate(`/error/${response.statusText}`);
         return;
       }
-
       const responseObj = await response.json();
       const agents = responseObj.data;
       setAgents(agents);
     }
-
     getAgents();
-
     return;
   }, [agents.length]);
 
   function updateForm(value) {
-    return setForm(prev => {
-      return { ...prev, ...value };
-    });
+    return setForm(prev => ({ ...prev, ...value }));
   }
 
   function onSubmit(e) {
     e.preventDefault();
-    setModal(() => {
-      return { show: true };
-    });
+    setModal(() => ({ show: true }));
   }
 
   async function handleConfirm() {
     const newTransaction = { ...form };
-
-    await fetch('http://localhost:5000/transaction', {
+    const response = await fetch('http://localhost:5000/transaction', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: authHeader(),
       },
       body: JSON.stringify(newTransaction),
-    }).catch(error => {
-      navigate(`/error/${error}`);
-      return;
     });
-
+    if (!response.ok) {
+      if (response.status === 403) {
+        signOut();
+        navigate('/login');
+        return;
+      }
+      navigate(`/error/${response.statusText}`);
+      return;
+    }
     setForm({
       amount: '',
       agentId: '',
     });
-
     navigate('/transaction');
   }
 
   function handleClose() {
-    setModal(() => {
-      return { show: false };
-    });
+    setModal(() => ({ show: false }));
   }
 
   return (

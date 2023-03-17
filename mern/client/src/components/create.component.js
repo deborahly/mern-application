@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthHeader, useSignOut } from 'react-auth-kit';
 import Modal from './modal/modal.component';
 
 export default function Create() {
@@ -17,6 +17,7 @@ export default function Create() {
   const [modal, setModal] = useState({ show: false });
   const navigate = useNavigate();
   const authHeader = useAuthHeader();
+  const signOut = useSignOut();
 
   function updateForm(value) {
     return setForm(prev => ({ ...prev, ...value }));
@@ -30,17 +31,23 @@ export default function Create() {
 
   async function handleConfirm() {
     const newPerson = { ...form };
-    await fetch('http://localhost:5000/agent-create', {
+    const response = await fetch('http://localhost:5000/agent-create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: authHeader(),
       },
       body: JSON.stringify(newPerson),
-    }).catch(error => {
-      navigate(`/error/${error}`);
-      return;
     });
+    if (!response.ok) {
+      if (response.status === 403) {
+        signOut();
+        navigate('/login');
+        return;
+      }
+      navigate(`/error/${response.statusText}`);
+      return;
+    }
     setForm({
       firstName: '',
       lastName: '',
