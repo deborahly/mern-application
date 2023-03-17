@@ -15,26 +15,21 @@ export default function Create() {
     region: '',
   });
   const [modal, setModal] = useState({ show: false });
-
   const navigate = useNavigate();
   const authHeader = useAuthHeader();
 
   function updateForm(value) {
-    return setForm(prev => {
-      return { ...prev, ...value };
-    });
+    return setForm(prev => ({ ...prev, ...value }));
   }
 
   function onSubmit(e) {
     e.preventDefault();
-    setModal(() => {
-      return { show: true };
-    });
+    setModal(() => ({ show: true }));
+    return;
   }
 
   async function handleConfirm() {
     const newPerson = { ...form };
-
     await fetch('http://localhost:5000/agent-create', {
       method: 'POST',
       headers: {
@@ -46,7 +41,6 @@ export default function Create() {
       navigate(`/error/${error}`);
       return;
     });
-
     setForm({
       firstName: '',
       lastName: '',
@@ -57,14 +51,13 @@ export default function Create() {
       sales: '',
       region: '',
     });
-
     navigate('/agent', { state: { created: true } });
+    return;
   }
 
   function handleClose() {
-    setModal(() => {
-      return { show: false };
-    });
+    setModal(() => ({ show: false }));
+    return;
   }
 
   return (
