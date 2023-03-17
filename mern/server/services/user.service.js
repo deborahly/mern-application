@@ -28,13 +28,17 @@ async function loginUser(email, password) {
     }
 
     if (user.password == password) {
-      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+      const expiresIn = 100;
+      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: expiresIn,
+      });
 
       return {
         firstName: user.first_name,
         lastName: user.last_name,
         email: user.email,
         accessToken: accessToken,
+        expiresIn: expiresIn,
       };
     } else {
       return false;
