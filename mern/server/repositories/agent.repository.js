@@ -33,7 +33,9 @@ async function agentUpdate(id, agent) {
   try {
     const db_connect = dbo.getDb('admin-app');
     const query = { _id: ObjectId(id) };
-    return await db_connect.collection('agents').update(query, agent);
+    return await db_connect
+      .collection('agents')
+      .findOneAndUpdate(query, { $set: agent }, { upsert: true });
   } catch (err) {
     throw err;
   }
