@@ -19,7 +19,6 @@ export default function Edit() {
 
   useEffect(() => {
     async function fetchData() {
-      const id = params.id.toString();
       const response = await fetch(
         `http://localhost:5000/agent/${params.id.toString()}`,
         {
@@ -28,41 +27,32 @@ export default function Edit() {
             Authorization: authHeader(),
           },
         }
-      );
-
+      ).catch(error => {
+        navigate(`/error/${error}`);
+        return;
+      });
       if (!response.ok) {
         navigate(`/error/${response.statusText}`);
         return;
       }
-
       const responseObj = await response.json();
-
       const agent = responseObj.data;
-
       if (!agent) {
-        window.alert(`Agent with id ${id} not found`);
-        navigate('/');
+        navigate('/error/Agent not found');
         return;
       }
-
       setForm(agent);
     }
-
     fetchData();
-
     return;
   }, [params.id]);
 
-  // These methods will update the state properties.
   function updateForm(value) {
-    return setForm(prev => {
-      return { ...prev, ...value };
-    });
+    return setForm(prev => ({ ...prev, ...value }));
   }
 
   async function onSubmit(e) {
     e.preventDefault();
-
     const editedPerson = {
       name: form.name,
       position: form.position,
@@ -76,8 +66,6 @@ export default function Edit() {
       sales: form.sales,
       region: form.region,
     };
-
-    // This will send a post request to update the data in the database.
     await fetch(`http://localhost:5000/agent-update/${params.id}`, {
       method: 'POST',
       body: JSON.stringify(editedPerson),
@@ -85,12 +73,13 @@ export default function Edit() {
         'Content-Type': 'application/json',
         Authorization: authHeader(),
       },
+    }).catch(error => {
+      navigate(`/error/${error}`);
+      return;
     });
-
     navigate('/agent', { state: { edited: true } });
   }
 
-  // This following section will display the form that takes input from the user to update the data.
   return (
     <div>
       <h3>Update Agent</h3>
