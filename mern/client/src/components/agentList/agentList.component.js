@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, NavLink, useLocation } from 'react-router-dom';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthHeader, useSignOut } from 'react-auth-kit';
 import { ToastContainer } from 'react-toastify';
 import { toastSuccess } from '../../utils/toast.utils';
 import Agent from '../agent.component';
@@ -14,6 +14,7 @@ export default function AgentList() {
   const { state } = useLocation();
   const authHeader = useAuthHeader();
   const navigate = useNavigate();
+  const signOut = useSignOut();
 
   useEffect(() => {
     if (state && state.created) toastSuccess('Agent created.');
@@ -30,6 +31,11 @@ export default function AgentList() {
         },
       });
       if (!response.ok) {
+        if (response.status === 403) {
+          signOut();
+          navigate('/login');
+          return;
+        }
         navigate(`/error/${response.statusText}`);
         return;
       }
@@ -50,12 +56,21 @@ export default function AgentList() {
   }
 
   async function handleConfirm() {
-    await fetch(`http://localhost:5000/agent-delete?id=${agentToDelete.id}`, {
+    const response = await fetch(`http://localhost:5000/agent-delete?id=${agentToDelete.id}`, {
       method: 'DELETE',
       headers: {
         Authorization: authHeader(),
       },
     });
+    if (!response.ok) {
+      if (response.status === 403) {
+        signOut();
+        navigate('/login');
+        return;
+      }
+      navigate(`/error/${response.statusText}`);
+      return;
+    }
     const newAgents = agents.filter(el => el._id !== agentToDelete.id);
     setAgents(newAgents);
     setModal(() => ({ show: false }));
