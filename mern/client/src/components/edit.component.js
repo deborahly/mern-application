@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthHeader, useSignOut } from 'react-auth-kit';
 
 export default function Edit() {
   const [form, setForm] = useState({
@@ -16,6 +16,7 @@ export default function Edit() {
   const params = useParams();
   const navigate = useNavigate();
   const authHeader = useAuthHeader();
+  const signOut = useSignOut();
 
   useEffect(() => {
     async function fetchData() {
@@ -27,20 +28,18 @@ export default function Edit() {
             Authorization: authHeader(),
           },
         }
-      ).catch(error => {
-        navigate(`/error/${error}`);
-        return;
-      });
+      );
       if (!response.ok) {
+        if (response.status === 403) {
+          signOut();
+          navigate('/login');
+          return;
+        }
         navigate(`/error/${response.statusText}`);
         return;
       }
       const responseObj = await response.json();
       const agent = responseObj.data;
-      if (!agent) {
-        navigate('/error/Agent not found');
-        return;
-      }
       setForm(agent);
     }
     fetchData();
@@ -66,17 +65,26 @@ export default function Edit() {
       sales: form.sales,
       region: form.region,
     };
-    await fetch(`http://localhost:5000/agent-update/${params.id}`, {
-      method: 'POST',
-      body: JSON.stringify(editedPerson),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: authHeader(),
-      },
-    }).catch(error => {
-      navigate(`/error/${error}`);
+    const response = await fetch(
+      `http://localhost:5000/agent-update/${params.id}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(editedPerson),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: authHeader(),
+        },
+      }
+    );
+    if (!response.ok) {
+      if (response.status === 403) {
+        signOut();
+        navigate('/login');
+        return;
+      }
+      navigate(`/error/${response.statusText}`);
       return;
-    });
+    }
     navigate('/agent', { state: { edited: true } });
   }
 

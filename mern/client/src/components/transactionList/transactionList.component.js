@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthHeader, useSignOut } from 'react-auth-kit';
 import { useNavigate, NavLink } from 'react-router-dom';
 import Transaction from '../transaction.component';
 import './transactionList.styles.css';
@@ -9,6 +9,7 @@ export default function TransactionList() {
   const [agents, setAgents] = useState([]);
   const authHeader = useAuthHeader();
   const navigate = useNavigate();
+  const signOut = useSignOut();
 
   useEffect(() => {
     async function getTransactions() {
@@ -18,12 +19,15 @@ export default function TransactionList() {
           Authorization: authHeader(),
         },
       });
-
       if (!response.ok) {
+        if (response.status === 403) {
+          signOut();
+          navigate('/login');
+          return;
+        }
         navigate(`/error/${response.statusText}`);
         return;
       }
-
       const responseObj = await response.json();
       setAgents(responseObj.data.agents);
       setTransactions(responseObj.data.transactions);
@@ -44,6 +48,7 @@ export default function TransactionList() {
       );
     });
   }
+  
   return (
     <div>
       <div className='transaction-list__header'>
