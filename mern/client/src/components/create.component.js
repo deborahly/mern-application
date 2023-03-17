@@ -58,7 +58,7 @@ export default function Create() {
       region: '',
     });
 
-    navigate('/agent');
+    navigate('/agent', { state: { created: true } });
   }
 
   function handleClose() {

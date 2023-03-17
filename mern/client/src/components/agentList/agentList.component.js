@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import Agent from '../agent.component';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { useAuthHeader } from 'react-auth-kit';
+import { ToastContainer } from 'react-toastify';
+import { toastSuccess } from '../../utils/toast.utils';
+import Agent from '../agent.component';
 import Modal from '../modal/modal.component';
 import './agentList.styles.css';
 
@@ -9,9 +11,15 @@ export default function AgentList() {
   const [agents, setAgents] = useState([]);
   const [modal, setModal] = useState({ show: false });
   const [agentToDelete, setAgentToDelete] = useState({ id: '' });
-
+  const { state } = useLocation();
   const authHeader = useAuthHeader();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (state && state.created) toastSuccess('Agent created.');
+    if (state && state.edited) toastSuccess('Agent edited.');
+    return;
+  }, []);
 
   useEffect(() => {
     async function getAgents() {
@@ -21,31 +29,24 @@ export default function AgentList() {
           Authorization: authHeader(),
         },
       });
-
       if (!response.ok) {
         navigate(`/error/${response.statusText}`);
         return;
       }
-
       const responseObj = await response.json();
       const agents = responseObj.data;
       setAgents(agents);
     }
-
     getAgents();
-
     return;
   }, [agents.length]);
 
   function handleDeleteClick(id) {
-    setAgentToDelete(() => {
-      return {
-        id: id,
-      };
-    });
-    setModal(() => {
-      return { show: true };
-    });
+    setAgentToDelete(() => ({
+      id: id,
+    }));
+    setModal(() => ({ show: true }));
+    return;
   }
 
   async function handleConfirm() {
@@ -57,27 +58,24 @@ export default function AgentList() {
     });
     const newAgents = agents.filter(el => el._id !== agentToDelete.id);
     setAgents(newAgents);
-    setModal(() => {
-      return { show: false };
-    });
+    setModal(() => ({ show: false }));
+    toastSuccess('Agent deleted.');
+    return;
   }
 
   function handleClose() {
-    setModal(() => {
-      return { show: false };
-    });
+    setModal(() => ({ show: false }));
+    return;
   }
 
   function agentList() {
-    return agents.map(agent => {
-      return (
-        <Agent
-          agent={agent}
-          deleteAgent={() => handleDeleteClick(agent._id)}
-          key={agent._id}
-        />
-      );
-    });
+    return agents.map(agent => (
+      <Agent
+        agent={agent}
+        deleteAgent={() => handleDeleteClick(agent._id)}
+        key={agent._id}
+      />
+    ));
   }
 
   return (
@@ -109,10 +107,11 @@ export default function AgentList() {
       </table>
       <Modal
         show={modal.show}
-        text='Are you sure you want to continue?'
+        text='This action will also delete all transactions associated with the agent. Are you sure you want to continue?'
         handleConfirm={handleConfirm}
         handleClose={handleClose}
       />
+      <ToastContainer />
     </div>
   );
 }
