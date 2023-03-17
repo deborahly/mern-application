@@ -15,6 +15,11 @@ async function getAgents() {
 async function getAgent(id) {
   try {
     const dbResult = await AgentRepository.agentFindOne(id);
+    if (dbResult == null) {
+      const err = new Error('Agent not found.');
+      err.status = 404;
+      throw err;
+    }
     return dbResult;
   } catch (err) {
     throw err;
