@@ -38,12 +38,13 @@ async function loginUser(req, res, next) {
     }
 
     const data = await UserService.loginUser(email, password);
+
     if (data) {
       const message = 'User logged in';
       res.status(200).json({ type: 'success', message: message, data: data });
     } else {
-      const message = 'Not allowed.';
-      res.status(400).json({ type: 'error', message: message });
+      const message = 'Unauthorized.';
+      res.status(403).json({ type: 'error', message: message });
     }
   } catch (err) {
     next(err);
