@@ -38,47 +38,45 @@ export default function Login() {
       headers: {
         'Content-Type': 'application/json',
       },
-    }).catch(error => {
-      navigate(`/error/${error}`);
-      return;
     });
+
     if (!response.ok) {
-      // Reset form
-      setForm(() => {
-        return { email: '', password: '' };
-      });
-      // Update alert status
-      setAlert(() => {
-        return {
-          variant: variantList.danger,
-          content: 'Incorrect username or password. Please try again.',
-          active: true,
-        };
-      });
-      // Add 5s timeout
-      const timer = setTimeout(() => {
+      if (response.status === 403) {
+        setForm(() => {
+          return { email: '', password: '' };
+        });
         setAlert(() => {
           return {
-            variant: '',
-            content: '',
-            active: false,
+            variant: variantList.danger,
+            content: 'Incorrect username or password. Please try again.',
+            active: true,
           };
         });
-      }, 5000);
-      return () => clearTimeout(timer);
+        const timer = setTimeout(() => {
+          setAlert(() => {
+            return {
+              variant: '',
+              content: '',
+              active: false,
+            };
+          });
+        }, 5000);
+        return () => clearTimeout(timer);
+      }
+      navigate(`/error/${response.statusText}`);
+      return;
     }
-    // If response.ok
     const responseObj = await response.json();
-    const user = responseObj.data;
+    const data = responseObj.data;
     if (
       signIn({
-        token: user.accessToken,
-        expiresIn: 3600,
+        token: data.accessToken,
+        expiresIn: data.expiresIn,
         tokenType: 'Bearer',
         authState: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
         },
       })
     ) {
