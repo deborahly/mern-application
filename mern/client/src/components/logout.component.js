@@ -7,7 +7,7 @@ export default function Logout() {
 
   function yesHandler() {
     signOut();
-    navigate('/');
+    navigate('/login');
   }
 
   function noHandler() {
