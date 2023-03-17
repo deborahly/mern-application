@@ -1,40 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSignIn, useIsAuthenticated } from 'react-auth-kit';
 import { useNavigate } from 'react-router-dom';
 import CryptoJS from 'crypto-js';
 import BootstrapAlert, { variantList } from './alert.component';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function Login() {
   const signIn = useSignIn();
   const navigate = useNavigate();
   const isAuthenticated = useIsAuthenticated();
-
   const [form, setForm] = useState({
     email: '',
     password: '',
   });
-
   const [alert, setAlert] = useState({
     variant: '',
     content: '',
     active: false,
   });
 
-  useEffect(() => {
-    toast('Please, sign in.');
-  }, []);
-
   function updateForm(value) {
-    return setForm(prev => {
-      return { ...prev, ...value };
-    });
+    return setForm(prev => ({ ...prev, ...value }));
   }
 
   async function onSubmit(e) {
     e.preventDefault();
-
     const loginAttempt = {
       email: form.email,
       password: CryptoJS.HmacSHA512(
@@ -42,15 +32,16 @@ export default function Login() {
         form.password
       ).toString(),
     };
-
     const response = await fetch(`http://localhost:5000/login`, {
       method: 'POST',
       body: JSON.stringify(loginAttempt),
       headers: {
         'Content-Type': 'application/json',
       },
+    }).catch(error => {
+      navigate(`/error/${error}`);
+      return;
     });
-
     if (!response.ok) {
       // Reset form
       setForm(() => {
@@ -60,7 +51,7 @@ export default function Login() {
       setAlert(() => {
         return {
           variant: variantList.danger,
-          content: response.statusText,
+          content: 'Incorrect username or password. Please try again.',
           active: true,
         };
       });
@@ -76,11 +67,9 @@ export default function Login() {
       }, 5000);
       return () => clearTimeout(timer);
     }
-
     // If response.ok
     const responseObj = await response.json();
     const user = responseObj.data;
-
     if (
       signIn({
         token: user.accessToken,
@@ -129,18 +118,6 @@ export default function Login() {
           <input type='submit' value='Login' className='btn btn-primary' />
         </div>
       </form>
-      <ToastContainer
-        position='top-right'
-        autoClose={5000}
-        hideProgressBar={true}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
       {alert.active && (
         <BootstrapAlert alertVariant={alert.variant}>
           {alert.content}
